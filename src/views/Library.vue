@@ -1,8 +1,8 @@
 <template>
   <div>
     <h1>Library</h1>
-      <Articles :collec="collec"></Articles>
-      <router-view name="locDown" @send-lab="$emit('send-lab',$event)"></router-view>
+      <Articles ></Articles>
+      <router-view name="locDown" ></router-view>
   </div>
 </template>
 
@@ -11,7 +11,6 @@
   import Articles from '../components/Articles.vue'
   export default {
     name: 'Library',
-    props: ['collec'],
     components: {
       Articles
     }

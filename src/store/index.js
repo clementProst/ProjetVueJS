@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import {Virus, viruses} from "../model"
 import router from '../router/index'
 
+Vue.use(Vuex)
+
 let store =  new Vuex.Store({
     state: {
         viruses,
@@ -18,6 +20,9 @@ let store =  new Vuex.Store({
         move_basket_to_lab(state) {
             state.basket.forEach(v => state.samples.push(v));
             state.basket = []
+        },
+        store_viruses(state,newViruses){
+            state.viruses.push(newViruses);
         }
     },
 

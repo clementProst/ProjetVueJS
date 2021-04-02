@@ -7,7 +7,7 @@
       </tr>
       <tr>
         <td>
-          <CheckedList :fields="['name','code']" :entries="samples" @chosen-changed="chosenViruses = $event" />
+          <CheckedList :fields="['name','code']" :entries="$store.state.samples" @chosen-changed="chosenViruses = $event" />
         </td>
       </tr>
     </table>
@@ -20,16 +20,19 @@
 
 <script>
   import CheckedList from '../components/CheckedList.vue'
+  import {mapState} from "vuex";
 
   export default {
     name: 'Slicer',
-    props: ['samples', 'parts'],
     data : () => {
       return {
         chosenViruses:[],
         cutFactor: 5,
         nbMutation : 10,
       }
+    },
+    computed: {
+      ...mapState(["samples","parts"])
     },
     components: {
       CheckedList
@@ -38,14 +41,14 @@
       cut : function() {
         if (this.cutFactor == 0) return;
         this.chosenViruses.forEach(e => {
-          let s = this.samples[e];
+          let s = this.$store.state.samples[e];
           for(let i=0;i<s.code.length;i+=this.cutFactor) {
-            this.parts.push({code : s.code.substring(i,i+this.cutFactor)});
+            this.$store.state.parts.push({code : s.code.substring(i,i+this.cutFactor)});
           }
         });
         // remove chosen viruses
         for(let i=this.chosenViruses.length-1;i>=0;i--) {
-          this.samples.splice(this.chosenViruses[i],1);
+          this.$store.state.samples.splice(this.chosenViruses[i],1);
         }
         // unselect all
         this.chosenViruses.splice(0,this.chosenViruses.length)
@@ -55,7 +58,7 @@
 
         this.chosenViruses.forEach(e => {
           let newCode;
-          let s = this.samples[e];
+          let s = this.$store.state.samples[e];
           for(let i=0;i<this.nbMutation;i++) {
             let idx = Math.floor(Math.random() * s.code.length);
             let chr =  String.fromCharCode(Math.floor(Math.random() * 4)+ "A".charCodeAt(0));

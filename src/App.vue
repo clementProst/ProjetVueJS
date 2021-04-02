@@ -2,7 +2,7 @@
   <div id="app">
     <NavBar :titles="titles" />
     <keep-alive>
-    <router-view name="locCentral" :samples="samples" :collec="collec" @send-lab="receiveVirus($event)" @store-virus="collec.push($event)"></router-view>
+    <router-view name="locCentral" ></router-view>
     </keep-alive>
   </div>
 </template>
@@ -17,18 +17,11 @@
       return {
         titles : [ { text: "Home", color:"black", path:"/home"}, { text: "Lab", color:"blue", path:"/labo/slice"}, { text: "Library", color:"red", path:"/library/view"} ],
         currentMenu : 0,
-        samples : [],
-        collec : viruses
       }
     },
     components: {
       NavBar
     },
-    methods: {
-      receiveVirus : function(viruses) {
-        viruses.forEach(v => this.samples.push(v));
-      }
-    }
   }
 </script>
 

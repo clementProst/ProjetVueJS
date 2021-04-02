@@ -6,7 +6,7 @@
       </tr>
       <tr>
         <td>
-          <CheckedList :fields="['code']" :entries="parts" @chosen-changed="chosenParts = $event" />
+          <CheckedList :fields="['code']" :entries="$store.state.parts" @chosen-changed="chosenParts = $event" />
         </td>
       </tr>
     </table>
@@ -26,10 +26,10 @@
 <script>
   import {Virus, viruses} from '../model.js'
   import CheckedList from '../components/CheckedList.vue'
+  import {mapMutations, mapState} from "vuex";
 
   export default {
     name: 'Mixer',
-    props: ['parts'],
     data : () => {
       return {
         chosenParts:[],
@@ -38,6 +38,11 @@
     },
     components: {
       CheckedList
+    },
+
+    computed: {
+      ...mapState(["viruses", "parts","samples"]),
+      ...mapMutations(["store_viruses"])
     },
     methods: {
       mix : function() {
@@ -48,20 +53,20 @@
         for(let i=0;i<nb;i++) {
           // choose randomly a part among the selected ones
           let idx = Math.floor(Math.random() * chosen.length);
-          let p = this.parts[chosen[idx]];
+          let p = this.$store.state.parts[chosen[idx]];
           newCode = newCode+p.code;
           chosen.splice(idx,1);
         }
-        this.newVirus = new Virus(viruses.length,'mixedvirus',newCode);
+        this.newVirus = new Virus(this.$store.state.viruses.length,'mixedvirus',newCode);
         // remove chosen parts
         for(let i=this.chosenParts.length-1;i>=0;i--) {
-          this.parts.splice(this.chosenParts[i],1);
+          this.$store.state.parts.splice(this.chosenParts[i],1);
         }
         // unselect all
         this.chosenParts.splice(0,this.chosenParts.length)
       },
       sendToLibrary : function() {
-        this.$emit('store-virus',this.newVirus);
+        this.$store.commit('store_viruses',this.newVirus);
         this.newVirus = null;
       }
     }

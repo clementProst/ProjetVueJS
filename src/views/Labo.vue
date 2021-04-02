@@ -5,7 +5,7 @@
       <tr>
         <td>
           <keep-alive include="Mixer">
-            <router-view name="locSubCentral" :parts="parts" :samples="samples" @store-virus="$emit('store-virus',$event)"></router-view>
+            <router-view name="locSubCentral" ></router-view>
           </keep-alive>
         </td>
       </tr>
@@ -15,27 +15,27 @@
 
 <script>
   import {Virus, viruses} from '../model.js'
+  import {mapState} from "vuex";
 
   export default {
     name: 'Labo',
-    props: ['samples'],
-    data : () => {
-      return {
-        parts : []
-      }
+
+    computed: {
+      ...mapState(["samples","parts"])
     },
+
     methods: {
       cut : function() {
         if (this.cutFactor == 0) return;
         this.chosenViruses.forEach(e => {
-          let s = this.samples[e];
+          let s = this.$store.state.samples[e];
           for(let i=0;i<s.code.length;i+=this.cutFactor) {
-            this.parts.push({code : s.code.substring(i,i+this.cutFactor)});
+            this.$store.state.parts.push({code : s.code.substring(i,i+this.cutFactor)});
           }
         });
         // remove chosen viruses
         for(let i=this.chosenViruses.length-1;i>=0;i--) {
-          this.samples.splice(this.chosenViruses[i],1);
+          this.$store.state.samples.splice(this.chosenViruses[i],1);
         }
         // unselect all
         this.chosenViruses.splice(0,this.chosenViruses.length)
@@ -45,7 +45,7 @@
 
         this.chosenViruses.forEach(e => {
           let newCode;
-          let s = this.samples[e];
+          let s = this.$store.state.samples[e];
           for(let i=0;i<this.nbMutation;i++) {
             let idx = Math.floor(Math.random() * s.code.length);
             let chr =  String.fromCharCode(Math.floor(Math.random() * 4)+ "A".charCodeAt(0));
@@ -63,14 +63,14 @@
         for(let i=0;i<nb;i++) {
           // choose randomly a part among the selected ones
           let idx = Math.floor(Math.random() * chosen.length);
-          let p = this.parts[chosen[idx]];
+          let p = this.$store.state.parts[chosen[idx]];
           newCode = newCode+p.code;
           chosen.splice(idx,1);
         }
-        this.newVirus = new Virus(viruses.length,'mixedvirus',newCode);
+        this.newVirus = new Virus(this.$store.state.viruses.length,'mixedvirus',newCode);
         // remove chosen parts
         for(let i=this.chosenParts.length-1;i>=0;i--) {
-          this.parts.splice(this.chosenParts[i],1);
+          this.$store.state.parts.splice(this.chosenParts[i],1);
         }
         // unselect all
         this.chosenParts.splice(0,this.chosenParts.length)
